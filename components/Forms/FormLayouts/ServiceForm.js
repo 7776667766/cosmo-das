@@ -14,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
+import axiosImage from "helper/api-image";
 import * as Yup from "yup";
 import { requiredValidation, slugValidation } from "@/utils/validation";
 import { addservicesFunApi, editServicesFunApi } from "store/service/services";
@@ -24,7 +25,6 @@ import { getServicesTypeFunApi } from "store/service/services";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { LoadingButtonComponent } from "@/components/UIElements/Buttons/LoadingButton";
-import axiosImage from "helper/api-image";
 
 const ServiceForm = ({ formData, isEditMode }) => {
   const [imgUrlCount, setImgUrlCount] = useState(1);

@@ -108,24 +108,24 @@ export const SidebarData = () => {
     // },
 
  
-    // {
-    //   title: "Specialist",
-    //   path: "/specialist/",
+    {
+      title: "Categories",
+      path: "/specialist/",
 
-    //   icon: <LayersIcon />,
-    //   iconClosed: <KeyboardArrowRightIcon />,
-    //   iconOpened: <KeyboardArrowDownIcon />,
-    //   subNav: [
-    //     {
-    //       title: "Specialist",
-    //       path: "/specialist/",
-    //     },
-    //     {
-    //       title: "Add Specialist",
-    //       path: "/specialist/addSpecialist/",
-    //     },
-    //   ],
-    // },
+      icon: <LayersIcon />,
+      iconClosed: <KeyboardArrowRightIcon />,
+      iconOpened: <KeyboardArrowDownIcon />,
+      subNav: [
+        {
+          title: "Specialist",
+          path: "/specialist/",
+        },
+        {
+          title: "Add Specialist",
+          path: "/specialist/addSpecialist/",
+        },
+      ],
+    },
  {
       title: "Orders",
       path: "/services/service-type",
