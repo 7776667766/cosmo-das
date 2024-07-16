@@ -108,24 +108,24 @@ export const SidebarData = () => {
     // },
 
  
-    {
-      title: "Categories",
-      path: "/specialist/",
+    // {
+    //   title: "Categories",
+    //   path: "/specialist/",
 
-      icon: <LayersIcon />,
-      iconClosed: <KeyboardArrowRightIcon />,
-      iconOpened: <KeyboardArrowDownIcon />,
-      subNav: [
-        {
-          title: "Specialist",
-          path: "/specialist/",
-        },
-        {
-          title: "Add Specialist",
-          path: "/specialist/addSpecialist/",
-        },
-      ],
-    },
+    //   icon: <LayersIcon />,
+    //   iconClosed: <KeyboardArrowRightIcon />,
+    //   iconOpened: <KeyboardArrowDownIcon />,
+    //   subNav: [
+    //     {
+    //       title: "Specialist",
+    //       path: "/specialist/",
+    //     },
+    //     {
+    //       title: "Add Specialist",
+    //       path: "/specialist/addSpecialist/",
+    //     },
+    //   ],
+    // },
  {
       title: "Orders",
       path: "/services/service-type",
@@ -198,23 +198,23 @@ export const SidebarData = () => {
     //   path: "/transaction/",
     //   icon: <LayersIcon />,
     // },
-    // role === "admin" && {
-    //   title: "Templates",
-    //   path: "/templates",
-    //   icon: <LayersIcon />,
-    //   iconClosed: <KeyboardArrowRightIcon />,
-    //   iconOpened: <KeyboardArrowDownIcon />,
-    //   subNav: [
-    //     {
-    //       title: "Templates",
-    //       path: "/templates/",
-    //     },
-    //     {
-    //       title: "Add Template",
-    //       path: "/templates/add-template/",
-    //     },
-    //   ],
-    // },
+ {
+      title: "Catagories",
+      path: "/templates",
+      icon: <LayersIcon />,
+      iconClosed: <KeyboardArrowRightIcon />,
+      iconOpened: <KeyboardArrowDownIcon />,
+      subNav: [
+        {
+          title: "Templates",
+          path: "/templates/",
+        },
+        {
+          title: "Add Template",
+          path: "/templates/add-template/",
+        },
+      ],
+    },
     // role === "admin" && {
     //   title: "Packages",
     //   path: "/packages/",

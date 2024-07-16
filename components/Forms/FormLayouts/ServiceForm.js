@@ -15,9 +15,8 @@ import SendIcon from "@mui/icons-material/Send";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import axiosImage from "helper/api-image";
+import axios from "helper/api-image";
 import * as Yup from "yup";
-import { requiredValidation, slugValidation } from "@/utils/validation";
-import { addservicesFunApi, editServicesFunApi } from "store/service/services";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { getspecialistApi } from "store/specialist/services";
@@ -32,9 +31,31 @@ const ServiceForm = ({ formData, isEditMode }) => {
   const [selectedSpecialist1, setSelectedSpecialist1] = useState(null);
   const [selectedSpecialist3, setSelectedSpecialist3] = useState(null);
   console.log(selectedSpecialist3, "selectedSpecialist3")
-  const dispatch = useDispatch();
+  const [categories, setallcategory] = useState([])
+  console.log("categories", categories)
 
   const router = useRouter();
+
+  const userdata = async () => {
+    try {
+      const response = await axios.get('/category/all');
+      console.log("Response from API:", response.data.result);
+      setallcategory(response.data.result)
+      if (response.status === 200) {
+        toast.success("Data fetched !");
+      } else {
+        toast.error(`Error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error in data fetch:", error);
+      toast.error("error");
+    }
+  }
+
+  useEffect(() => {
+    userdata()
+  }, []);
+
   const specialistArray = [
     { id: "dummy1", name: "Dummy BRAND 1" },
     { id: "dummy2", name: "Dummy BRAND 2" },
@@ -88,7 +109,6 @@ const ServiceForm = ({ formData, isEditMode }) => {
     setProfileImageUrls([...profileImageUrls, null]);
   };
 
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -122,9 +142,6 @@ const ServiceForm = ({ formData, isEditMode }) => {
     }
   };
 
-  const handleAddField = () => {
-    setImgUrlCount(prevCount => prevCount + 1);
-  };
 
   const formik = useFormik({
     initialValues: {
@@ -146,8 +163,9 @@ const ServiceForm = ({ formData, isEditMode }) => {
       price: formData?.price || 0,
       discount: formData?.discount || 0,
       quantity: formData?.quantity || 0,
-      categoryName: formData?.category?.name || "",
       status: formData?.status || "in-stock",
+      category: {},
+
       productType: formData?.productType || "",
       description: formData?.description || "",
       additionalInformation: formData?.additionalInformation || [],
@@ -180,8 +198,8 @@ const ServiceForm = ({ formData, isEditMode }) => {
           ...values,
           img: avatar,
           shade: profileImageUrls,
-
         }
+
         console.log("myservicedata ", myServiceData)
         const response = await axiosImage.post('/product/add', myServiceData);
 
@@ -380,7 +398,7 @@ const ServiceForm = ({ formData, isEditMode }) => {
 
 
                       <Box sx={{ display: "flex", alignItems: "end", gap: 1 }}>
-                        <Box sx={{ flex: 1,  marginLeft:"20px"}}>
+                        <Box sx={{ flex: 1, marginLeft: "20px" }}>
 
 
                           <TextField
@@ -461,17 +479,15 @@ const ServiceForm = ({ formData, isEditMode }) => {
                   value={selectedSpecialist1 || null}
                   onChange={(event, newValue) => {
                     setSelectedSpecialist1(newValue);
-                    formik.setFieldValue(
-                      "catagory",
-                      newValue?.id || ""
-                    );
+                    formik.setFieldValue("category",  {name : newValue?.parent, id: newValue?._id });
                   }}
-                  options={specialistArray1}
-                  getOptionLabel={(option) => option.name}
+                  options={categories}
+                  getOptionLabel={(option) => option.parent}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select Catagory" />
+                    <TextField {...params} label="Select Category" />
                   )}
                 />
+
               </FormControl>
             </Grid>
 

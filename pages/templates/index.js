@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import TableCell from "@mui/material/TableCell";
@@ -17,19 +17,35 @@ import {
 } from "store/template/services";
 import TransitionsDialog from "@/components/UIElements/Modal/TransitionsDialog";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import axios from "helper/api";
 
 const TemplatesPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [categories, setallcategory] = useState([])
+  console.log("categories", categories)
 
-  const { template } = useSelector((state) => state.template);
-  console.log(template, "template");
+  const userdata = async () => {
+    try {
+      const response = await axios.get('/category/all');
+
+      console.log("Response from API:", response.data.result);
+      setallcategory(response.data.result)
+      if (response.status === 200) {
+        toast.success("Data fetched !");
+      } else {
+        toast.error(`Error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error in data fetch:", error);
+      toast.error("error");
+    }
+  }
 
   useEffect(() => {
-    if (template.dataFatched !== true) {
-      dispatch(getAllTemplateFunApi());
-    }
-  }, [dispatch, template.data, template.dataFatched]);
+    userdata()
+  }, []);
 
   const nextPage = (id) => {
     console.log("id", id);
@@ -68,7 +84,7 @@ const TemplatesPage = () => {
               fontWeight: 500,
             }}
           >
-            My Templates
+            All Catagories
           </Typography>
           <Link href="/templates/add-template">
             <Button
@@ -85,13 +101,13 @@ const TemplatesPage = () => {
                 sx={{ position: "relative", top: "-1px" }}
                 className="mr-5px"
               />
-              Add Template
+              Add Category
             </Button>
           </Link>
         </Box>
 
         <CustomPaginationTable
-          tableData={template}
+          tableData={categories}
           isLoading={false}
           tableHeaderData={
             <>
@@ -110,15 +126,7 @@ const TemplatesPage = () => {
                   fontSize: "13.5px",
                 }}
               >
-                Name
-              </TableCell>
-              <TableCell
-                sx={{
-                  borderBottom: "1px solid #F7FAFF",
-                  fontSize: "13.5px",
-                }}
-              >
-                Slug
+                Image
               </TableCell>
 
               <TableCell
@@ -127,7 +135,7 @@ const TemplatesPage = () => {
                   fontSize: "13.5px",
                 }}
               >
-                Description
+                Product Type
               </TableCell>
 
               <TableCell
@@ -136,15 +144,16 @@ const TemplatesPage = () => {
                   fontSize: "13.5px",
                 }}
               >
-                Website
+                Parent
               </TableCell>
+             
               <TableCell
                 sx={{
                   borderBottom: "1px solid #F7FAFF",
                   fontSize: "13.5px",
                 }}
               >
-                Booking
+                Status
               </TableCell>
               <TableCell
                 sx={{
@@ -171,16 +180,16 @@ const TemplatesPage = () => {
                 {index + 0}
               </TableCell>
 
-              <TableCell
-                sx={{
-                  borderBottom: "1px solid #F7FAFF",
-                  fontSize: "13px",
-                  pt: "16px",
-                  pb: "16px",
-                }}
-              >
-                {data.name}
-              </TableCell>
+              <Image
+                    src={data.img}
+                    alt={`Website ${data.slug}`}
+                    width={50}
+                    height={50}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                    }}
+                  />
 
               <TableCell
                 sx={{
@@ -190,7 +199,7 @@ const TemplatesPage = () => {
                   pb: "16px",
                 }}
               >
-                {data.slug}
+                {data.productType}
               </TableCell>
 
               <TableCell
@@ -200,70 +209,27 @@ const TemplatesPage = () => {
                   pt: "16px",
                   pb: "16px",
                   overflow: "hidden",
-                  // display: "-webkit-box",
                   WebkitLineClamp: 3,
                   WebkitBoxOrient: "vertical",
                 }}
               >
-                {data.description}
+                {data.parent}
               </TableCell>
+              
               <TableCell
                 sx={{
                   borderBottom: "1px solid #F7FAFF",
+                  fontSize: "13px",
                   pt: "16px",
                   pb: "16px",
+                  overflow: "hidden",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
                 }}
               >
-                <Link
-                  variant="outlined"
-                  href={`${process.env.NEXT_PUBLIC_FRONTEND_WEB_URL}templates/site/${data.slug}`}
-                  target="_blank"
-                  sx={{
-                    pt: "2px",
-                    pb: "1px",
-                  }}
-                >
-                  <Image
-                    src={data.websiteImage}
-                    alt={`Website ${data.slug}`}
-                    width={50}
-                    height={50}
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                    }}
-                  />
-                </Link>
+                {data.status}
               </TableCell>
-              <TableCell
-                sx={{
-                  borderBottom: "1px solid #F7FAFF",
-                  pt: "16px",
-                  pb: "16px",
-                }}
-              >
-                <Link
-                  variant="outlined"
-                  href={`${process.env.NEXT_PUBLIC_FRONTEND_WEB_URL}templates/booking/${data.slug}`}
-                  target="_blank"
-                  sx={{
-                    pt: "2px",
-                    pb: "1px",
-                  }}
-                >
-                  <Image
-                    alt={`booking ${data.slug}`}
-                    src={data.bookingImage}
-                    width={50}
-                    height={50}
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                    }}
-                  />
-                </Link>
-              </TableCell>
-
+    
               <TableCell
                 sx={{
                   borderBottom: "1px solid #F7FAFF",

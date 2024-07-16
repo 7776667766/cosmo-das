@@ -33,7 +33,6 @@ import { useRouter } from "next/router";
 import axios from "helper/api";
 import toast from "react-hot-toast";
 
-
 const ServicesPage = () => {
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -54,15 +53,12 @@ const ServicesPage = () => {
     },
   }));
 
-
-
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [products, setallproducts] = useState([])
   console.log("products", products)
   const [selectedBusiness, setSelectedBusiness] = useState([]);
   console.log("selected business", selectedBusiness)
-
 
   const handleClick = (id) => {
     console.log("id 65", id)
@@ -80,8 +76,6 @@ const ServicesPage = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-
 
   const userdata = async () => {
     try {
