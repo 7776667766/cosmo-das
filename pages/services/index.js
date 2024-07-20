@@ -101,9 +101,10 @@ const ServicesPage = () => {
   const router = useRouter();
 
   const nextPage = (id) => {
+    console.log("id", id)
     router.push(`/services/edit?id=${id}`);
   };
-
+  
   const handleDelete = (id) => {
     dispatch(deleteServiceFunApi(id));
   };
@@ -410,7 +411,7 @@ const ServicesPage = () => {
                         </IconButton>
                       }
                       submitButtonText="Delete"
-                      handleSubmit={() => handleDelete(data.id)}
+                      handleSubmit={() => handleDelete(data._id)}
                     >
                       <div style={{ textAlign: "center" }}>
                         <Image
@@ -439,7 +440,7 @@ const ServicesPage = () => {
                       size="small"
                       color="primary"
                       className="primary"
-                      onClick={() => nextPage(data.id)}
+                      onClick={() => nextPage(data._id)}
                     >
                       <DriveFileRenameOutlineIcon fontSize="inherit" />
                     </IconButton>

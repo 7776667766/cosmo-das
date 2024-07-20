@@ -18,7 +18,7 @@ import axiosImage from "helper/api-image";
 import axios from "helper/api-image";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { getspecialistApi } from "store/specialist/services";
 import { getServicesTypeFunApi } from "store/service/services";
 import toast from "react-hot-toast";
@@ -26,15 +26,14 @@ import Image from "next/image";
 import { LoadingButtonComponent } from "@/components/UIElements/Buttons/LoadingButton";
 
 const ServiceForm = ({ formData, isEditMode }) => {
-  const [imgUrlCount, setImgUrlCount] = useState(1);
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   const [selectedSpecialist1, setSelectedSpecialist1] = useState(null);
   const [selectedSpecialist3, setSelectedSpecialist3] = useState(null);
   console.log(selectedSpecialist3, "selectedSpecialist3")
   const [categories, setallcategory] = useState([])
   console.log("categories", categories)
-
   const router = useRouter();
+
 
   const userdata = async () => {
     try {
@@ -71,13 +70,8 @@ const ServiceForm = ({ formData, isEditMode }) => {
   ];
 
   const [avatar, setavatar] = useState(null);
-  const [avatar2, setavatar2] = useState([]);
-  console.log("avatar2", avatar2)
-
-  console.log("avatar", avatar)
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [profileImageUrls, setProfileImageUrls] = useState([]);
-  console.log("4y4iu4o", profileImageUrls)
 
   const handleFileChange2 = (event, index) => {
     const files = event.target.files;
@@ -142,6 +136,15 @@ const ServiceForm = ({ formData, isEditMode }) => {
     }
   };
 
+  useEffect(() => {
+    if (isEditMode) {
+      setProfileImageUrl(formData?.img);
+      const shades = formData?.imageURLs?.map(item =>
+        item.shade) || [];
+      console.log("shades 143", shades)
+      setProfileImageUrls(shades.flat());
+    }
+  }, [formData, isEditMode]);
 
   const formik = useFormik({
     initialValues: {
@@ -149,13 +152,13 @@ const ServiceForm = ({ formData, isEditMode }) => {
       title: formData?.title || "",
       slug: formData?.slug || "",
       unit: formData?.unit || "",
-      imgUrls: [
+      imgUrls: formData?.imageURLs || [
         {
           color: {
             name: "",
             clrCode: ""
           },
-          img: ""
+          shade: [""]
         }
       ],
       parent: formData?.parent || "",
@@ -173,6 +176,7 @@ const ServiceForm = ({ formData, isEditMode }) => {
       sellCount: formData?.sellCount || 0,
       tags: formData?.tags || ["product", "feature"],
       brands: formData?.brands || ""
+
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required('Title is required'),
@@ -198,25 +202,26 @@ const ServiceForm = ({ formData, isEditMode }) => {
           ...values,
           img: avatar,
           shade: profileImageUrls,
-        }
+        };
+        console.log("myservicedata ", myServiceData);
 
-        console.log("myservicedata ", myServiceData)
-        const response = await axiosImage.post('/product/add', myServiceData);
-
+        const endpoint = isEditMode ? `/product/edit-product/${formData._id}` : '/product/add';
+        const Api = isEditMode ?  axiosImage.patch(endpoint, myServiceData) :  axiosImage.post(endpoint, myServiceData);
+        const response = await Api;
         console.log("Response from API:", response.data);
 
         if (response.status === 200) {
-          toast.success("Form submitted successfully!");
+          toast.success(`Success:${response.data.message}`);
+          router.push("/services")
         } else {
           toast.error(`Error: ${response.data.message}`);
         }
       } catch (error) {
         console.error("Error submitting form:", error);
-        toast.error("An error occurred while submitting the form. Please try again later.");
+        toast.error("500 Error / network Error / Route Error.");
       }
     }
   });
-
 
   return (
     <>
@@ -444,7 +449,8 @@ const ServiceForm = ({ formData, isEditMode }) => {
                 </Typography>
 
                 <Autocomplete
-                  value={selectedSpecialist || null}
+                  value={isEditMode ? (formData?.category?.brand || selectedSpecialist) : selectedSpecialist}
+
                   onChange={(event, newValue) => {
                     setSelectedSpecialist(newValue);
                     formik.setFieldValue(
@@ -453,7 +459,7 @@ const ServiceForm = ({ formData, isEditMode }) => {
                     );
                   }}
                   options={specialistArray}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
                   renderInput={(params) => (
                     <TextField {...params} label="Select Brands" />
                   )}
@@ -476,13 +482,15 @@ const ServiceForm = ({ formData, isEditMode }) => {
                 </Typography>
 
                 <Autocomplete
-                  value={selectedSpecialist1 || null}
+
+                  value={isEditMode ? (formData?.category?.name || selectedSpecialist3) : selectedSpecialist1}
                   onChange={(event, newValue) => {
                     setSelectedSpecialist1(newValue);
-                    formik.setFieldValue("category",  {name : newValue?.parent, id: newValue?._id });
+                    formik.setFieldValue("category", { name: newValue?.parent, id: newValue?._id });
                   }}
                   options={categories}
-                  getOptionLabel={(option) => option.parent}
+                  // getOptionLabel={(option) => option.parent}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : option.parent}
                   renderInput={(params) => (
                     <TextField {...params} label="Select Category" />
                   )}
@@ -501,11 +509,11 @@ const ServiceForm = ({ formData, isEditMode }) => {
                     mb: "12px",
                   }}
                 >
-                  status
+                  Status
                 </Typography>
 
                 <Autocomplete
-                  value={selectedSpecialist3 || null}
+                  value={isEditMode ? (formData?.status || selectedSpecialist3) : selectedSpecialist3}
                   onChange={(event, newValue) => {
                     setSelectedSpecialist3(newValue);
                     formik.setFieldValue(
@@ -514,13 +522,14 @@ const ServiceForm = ({ formData, isEditMode }) => {
                     );
                   }}
                   options={specialistArray3}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
                   renderInput={(params) => (
                     <TextField {...params} label="Select Status" />
                   )}
                 />
               </FormControl>
             </Grid>
+
 
             <Grid item xs={12} md={12} lg={12}>
               <Typography as="h5" sx={{ fontWeight: "500", fontSize: "14px", mb: "12px" }}>

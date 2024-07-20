@@ -191,7 +191,6 @@ export const SidebarData = () => {
   //     icon: <LayersIcon />,
   //   },
  
-
     // (role === "owner" || role === "admin") && {
     // {
     //   title: "Transaction",
@@ -206,17 +205,17 @@ export const SidebarData = () => {
       iconOpened: <KeyboardArrowDownIcon />,
       subNav: [
         {
-          title: "Templates",
+          title: "Category",
           path: "/templates/",
         },
         {
-          title: "Add Template",
+          title: "Add Category",
           path: "/templates/add-template/",
         },
       ],
     },
     // role === "admin" && {
-    //   title: "Packages",
+    //   title: "Packages",     
     //   path: "/packages/",
 
     //   icon: <LayersIcon />,
