@@ -3,8 +3,6 @@ import { Paper, Table, TableBody, TableContainer, Typography, TableRow } from "@
 import {
   Box,
   Dialog,
-  TextField,
-  useMediaQuery,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 
@@ -22,13 +20,7 @@ import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
 import Link from "next/link";
 import { CustomPaginationTable } from "@/components/Table/CustomPaginationTable";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteServiceFunApi,
-  getAllServiceFunApi,
-} from "store/service/services";
 import TransitionsDialog from "@/components/UIElements/Modal/TransitionsDialog";
-import { getMyBussinessFunApi } from "store/business/services";
 import { useRouter } from "next/router";
 import axios from "helper/api";
 import toast from "react-hot-toast";
@@ -53,7 +45,6 @@ const ServicesPage = () => {
     },
   }));
 
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [products, setallproducts] = useState([])
   console.log("products", products)
@@ -66,13 +57,7 @@ const ServicesPage = () => {
     setSelectedBusiness(selectedBusiness);
     setOpen(true);
   };
-  const handleReject = () => {
-    setOpen(false);
-
-    // setOpen2(true);
-    // setIsRejecting(true);
-  };
-
+ 
   const handleClose = () => {
     setOpen(false);
   };
@@ -103,11 +88,26 @@ const ServicesPage = () => {
   const nextPage = (id) => {
     console.log("id", id)
     router.push(`/services/edit?id=${id}`);
-  };
+  }; 
   
-  const handleDelete = (id) => {
-    dispatch(deleteServiceFunApi(id));
-  };
+  const handleDelete = async(id) => {
+    console.log("id 110",id)
+    try {
+      const response = await axios.delete(`product/${id}`);
+
+      console.log("Response from API:", response.data.data);
+      setallproducts(response.data.data)
+      if (response.status === 200) {
+        const updatedProducts = products.filter(product => product._id !== id);
+        setallproducts(updatedProducts);
+      }else {
+        toast.error(`Error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error in data fetch:", error);
+      toast.error("An error occurred while submitting the form. Please try again later.");
+    }
+  };  
 
   return (
     <>

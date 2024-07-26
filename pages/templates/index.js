@@ -10,18 +10,12 @@ import Image from "next/image";
 import Tooltip from "@mui/material/Tooltip";
 import Link from "next/link";
 import { CustomPaginationTable } from "@/components/Table/CustomPaginationTable";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deletetemplateFunApi,
-  getAllTemplateFunApi,
-} from "store/template/services";
 import TransitionsDialog from "@/components/UIElements/Modal/TransitionsDialog";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import axios from "helper/api";
 
 const TemplatesPage = () => {
-  const dispatch = useDispatch();
   const router = useRouter();
   const [categories, setallcategory] = useState([])
   console.log("categories", categories)
@@ -52,10 +46,24 @@ const TemplatesPage = () => {
     router.push(`/templates/edit?id=${id}`);
   };
 
-  const handleDelete = (id) => {
-    dispatch(deletetemplateFunApi(id));
-  };
+  const handleDelete = async(id) => {
+    console.log("id 110",id)
+    try {
+      const response = await axios.delete(`category/delete/${id}`);
+      console.log("Response from API:", response.data.data);
+      setallcategory(response.data.data)
+      if (response.status === 200) {
+        const updatedCategories = categories.filter(product => product._id !== id);
+        setallcategory(updatedCategories);
+      }else {
+        toast.error(`Error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error in data fetch:", error);
+      toast.error("An error occurred while submitting the form. Please try again later.");
+    }
 
+  };  
   return (
     <>
       <Card
@@ -267,7 +275,7 @@ const TemplatesPage = () => {
                         </IconButton>
                       }
                       submitButtonText="Delete"
-                      handleSubmit={() => handleDelete(data.id)}
+                      handleSubmit={() => handleDelete(data._id)}
                     >
                       <div style={{ textAlign: "center" }}>
                         <Image

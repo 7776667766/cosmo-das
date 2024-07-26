@@ -17,7 +17,6 @@ export default function EditServicePage() {
   console.log("products", products)
   console.log("my Getting id", id);
 
-
   const userdata = async () => {
     try {
       const response = await axios.get('/product/all');
@@ -34,10 +33,6 @@ export default function EditServicePage() {
       toast.error("An error occurred while submitting the form. Please try again later.");
     }
   }
-  useEffect(() => {
-    userdata()
-  }, []);
-
 
   useEffect(() => {
     console.log('ID:', id);
@@ -46,23 +41,30 @@ export default function EditServicePage() {
   useEffect(() => {
     {
       const myService = products?.find(
-        (data) => data?._id ==  id 
+        (data) => data?._id == id
       );
- 
       console.log(myService, "myservice");
 
       if (myService) {
         setServiceData(myService);
         setIsLoading(false);
       }
-    } 
+    }
   }, [
 
     id,
     router,
-    products.data,
+    products,
+
   ]);
-  if (router.isFallback) { 
+
+  useEffect(() => {
+    userdata()
+  }, []);
+
+
+
+  if (router.isFallback) {
     return <div>Loading Fallback ...</div>;
   }
   return (
